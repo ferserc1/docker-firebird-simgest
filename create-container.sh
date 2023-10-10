@@ -19,7 +19,4 @@ else
   exit 1
 fi
 
-docker run -d --name $CONTAINER -p 3050:3050 -v "$DBPATH":/firebird/data firebird-simgest
-echo Container created with the following authentication data:
-docker exec -t $CONTAINER cat /firebird/etc/SYSDBA.password | grep -E 'ISC_USER|ISC_PASSWORD'
-docker exec -t $CONTAINER cat /firebird/etc/SYSDBA.password | grep -E 'ISC_USER|ISC_PASSWORD'
+docker run -d --name $CONTAINER -p 3050:3050 -v "$DBPATH/data":/firebird/data -v "$DBPATH/config":/firebird/config firebird-simgest
