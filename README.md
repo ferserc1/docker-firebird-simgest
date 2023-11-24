@@ -35,7 +35,7 @@ If the base image has not been previously created, this process can take quite a
 When finished, the access information to the database (user and password) will be printed on the terminal.
 
 ```sh
-./create-container.sh ~/firebird_db
+./create-container.sh ~/firebird_db/data
 Creating firebird docker container. Data path: '/Users/fernando/firebird_db/data'
 ad7db9b65aa4cfefdeb62c4e85acaff55a7ff4c08914b0fdbe9876a0a3e594be
 Container created with the following authentication data:
