@@ -8,15 +8,15 @@ See [https://github.com/jacobalberty/firebird-docker](https://github.com/jacobal
 
 ## Quick start
 
-First, you need to create a directory in your host to hold the database files and configuration files:
+First, you need to create a directory in your host to hold the database files:
 
 ```sh
 mkdir ~/firebird
-mkdir ~/firebird/data
-mkdir ~/firebird/config
 ```
 
-Put the configuration file in `~/firebird/config/firebird.conf`. You can use the example configuration file in this repository.
+You can customize the configuration file in this repo before creating the container:
+
+`firebird.conf`
 
 Create the container image:
 
@@ -32,16 +32,19 @@ Then, create the docker container passing the path of the base `firebird` direct
 
 If the base image has not been previously created, this process can take quite a long time depending on the power of your PC and the number of cores that Docker has configured, as it has to compile Firebird from source code.
 
-When finished, the access information to the database (user and password) will be printed on the terminal.
+## Database files
 
-```sh
-./create-container.sh ~/firebird_db/data
-Creating firebird docker container. Data path: '/Users/fernando/firebird_db/data'
-ad7db9b65aa4cfefdeb62c4e85acaff55a7ff4c08914b0fdbe9876a0a3e594be
-Container created with the following authentication data:
-ISC_USER=sysdba
-ISC_PASSWORD=qqYHFYG0IACNRGygB6hZ
-```
+After the container creation, you can access the Firebird files, including the configuration files, at your `firebird` path. Using the previous path, the configuration file will be placed in:
+
+`~/firebird/etc/firebird.conf`
+
+You can place the database files in the directory:
+
+`~/firebird/data/`
+
+The `data` path in the docker container is `/firebird/data`. To connect to the database, you can place the database files in your `firebird` folder at the host, and use the following connection URL:
+
+`/firebird/data/my_database_file`
 
 ## Get the database password
 
