@@ -1,39 +1,38 @@
-FROM --platform=linux/amd64 debian:bullseye-slim
+FROM almalinux:9
 
-LABEL maintainer="developer@sim3d.es"
+RUN dnf -y install epel-release
+RUN dnf -y install https://rpms.remirepo.net/enterprise/remi-release-9.rpm
+RUN dnf -y install wget lftp dos2unix
+RUN dnf -y install ncurses ncurses-compat-libs libtommath icu lsof tar mc
+RUN dnf install -y procps-ng
 
-ENV PREFIX=/usr/local/firebird
-ENV VOLUME=/firebird
-ENV DEBIAN_FRONTEND noninteractive
-ENV FBURL=https://github.com/FirebirdSQL/firebird/releases/download/R3_0_6/Firebird-3.0.6.33328-0.tar.bz2
-ENV DBPATH=/firebird/data
+RUN mkdir /root/utilidades
+RUN mkdir /root/scripts
+RUN mkdir /home/datos
+RUN mkdir /home/datos/limpiar
 
-COPY pre_build /home/pre_build
-COPY post_build /home/post_build
-RUN chmod -R +x /home/post_build /home/pre_build
+RUN [ -e /usr/lib64/libtommath.so.0 ] || ln -s /usr/lib64/libtommath.so.1.2.0 /usr/lib64/libtommath.so.0
+RUN [ -e /usr/lib64/libncurses.so.5 ] || ln -s /usr/lib64/libncurses.so.6.2 /usr/lib64/libncurses.so.5
 
-COPY firebird.conf ${PREFIX}/firebird.conf
+# Download and install Firebird with the custom installation script
+WORKDIR /root/utilidades
+RUN wget https://github.com/FirebirdSQL/firebird/releases/download/R3_0_7/Firebird-3.0.7.33374-0.amd64.tar.gz
+RUN tar -zxvf Firebird-3.0.7.33374-0.amd64.tar.gz
+WORKDIR /root/utilidades/Firebird-3.0.7.33374-0.amd64
+COPY resources/docker-install.sh .
+RUN chmod +x docker-install.sh \
+    && sh -x ./docker-install.sh
 
-COPY build.sh ./build.sh
+# Custom configuration file
+COPY resources/firebird.conf /opt/firebird/firebird.conf
 
-RUN chmod +x ./build.sh && \
-    sync && \
-    ./build.sh && \
-    rm -f ./build.sh
+# Expose the default Firebird port
+EXPOSE 3050
 
-VOLUME ["/firebird"]
+# Default data directory
+RUN mkdir -p /data
 
-EXPOSE 3050/tcp
-COPY docker-entrypoint.sh ${PREFIX}/docker-entrypoint.sh
-RUN chmod +x ${PREFIX}/docker-entrypoint.sh
+VOLUME ["/data"]
 
-COPY docker-healthcheck.sh ${PREFIX}/docker-healthcheck.sh
-RUN chmod +x ${PREFIX}/docker-healthcheck.sh \
-    && apt-get update \
-    && apt-get -qy install netcat \
-    && rm -rf /var/lib/apt/lists/*
-HEALTHCHECK CMD ${PREFIX}/docker-healthcheck.sh || exit 1
+CMD ["/opt/firebird/bin/fbguard", "-forever"]
 
-ENTRYPOINT ["/usr/local/firebird/docker-entrypoint.sh"]
-
-CMD ["firebird"]

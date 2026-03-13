@@ -1,11 +1,5 @@
 # docker Firebird
 
-## About
-
-This repository has been created based on jacobalberty's [docker Firebird](https://hub.docker.com/r/jacobalberty/firebird) container, and modified to fit the needs of our company.
-
-See [https://github.com/jacobalberty/firebird-docker](https://github.com/jacobalberty/firebird-docker)
-
 ## Quick start
 
 First, you need to create a directory in your host to hold the database files:
@@ -16,7 +10,7 @@ mkdir ~/firebird
 
 You can customize the configuration file in this repo before creating the container:
 
-`firebird.conf`
+`resources/firebird.conf`
 
 Create the container image:
 
@@ -24,19 +18,21 @@ Create the container image:
 ./create-docker-image.sh
 ```
 
-Then, create the docker container passing the path of the base `firebird` directory you use in the first step. It's important that you don't enter the last slash in the path:
+Then, create the docker container passing the path of the base `firebird` directory you use in the first step and the container name. It's important that you don't enter the last slash in the path.
 
 ```sh
-./create-container.sh ~/firebird        << Do not enter the last slash in the path!!
+./create-container.sh ~/firebird  my-firebird       << Do not enter the last slash in the path!!
 ```
 
-If the base image has not been previously created, this process can take quite a long time depending on the power of your PC and the number of cores that Docker has configured, as it has to compile Firebird from source code.
+Optionally, you can specify the Firebird port to be used in the container. By default, it will be `3050`, but you can change it to any other port if you want by specifying it as the third argument.
+
+```sh
+./create-container.sh ~/firebird  my-firebird 3051
+```
+
+The process will generate a docker image from almalinux:9.
 
 ## Database files
-
-After the container creation, you can access the Firebird files, including the configuration files, at your `firebird` path. Using the previous path, the configuration file will be placed in:
-
-`~/firebird/etc/firebird.conf`
 
 You can place the database files in the directory:
 
