@@ -18,4 +18,4 @@ else
   exit 1
 fi
 
-docker run -d --name "$CONTAINER" -p "$PORT":3050 -v "$DBPATH":/firebird firebird-simgest
+docker run -d --name "$CONTAINER" -p "$PORT":3050 -v "$DBPATH":/firebird firebird-3-simgest

@@ -44,10 +44,10 @@ The `data` path in the docker container is `/firebird/data`. To connect to the d
 
 ## Get the database password
 
-The database password is randomly generated when the container is first created. It can be found in the file `/firebird/etc/SYSDBA.password`.
+The database password is randomly generated when the container is first created. It can be found in the file `/opt/firebird/SYSDBA.password`.
 
 ```sh
-docker exec -t firebird-simgest cat /firebird/etc/SYSDBA.password
+docker exec -t firebird-simgest cat /opt/firebird/SYSDBA.password 
   # Firebird generated password for user SYSDBA is:
   #
   ISC_USER=sysdba
