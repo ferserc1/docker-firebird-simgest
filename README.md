@@ -42,31 +42,30 @@ The `data` path in the docker container is `/firebird/data`. To connect to the d
 
 `/firebird/data/my_database_file`
 
-## Get the database password
-
-The database password is randomly generated when the container is first created. It can be found in the file `/opt/firebird/SYSDBA.password`.
-
-```sh
-docker exec -t firebird-simgest cat /opt/firebird/SYSDBA.password 
-  # Firebird generated password for user SYSDBA is:
-  #
-  ISC_USER=sysdba
-  ISC_PASSWORD=d99a0e73dfa740aeb3d4
-  #
-  # Also set legacy variable though it can't be exported directly
-  #
-  ISC_PASSWD=d99a0e73dfa740aeb3d4
-  #
-  # generated at time Tue Oct 10 08:20:18 UTC 2023
-  #
-  # Your password can be changed to a more suitable one using
-  # SQL operator ALTER USER.
-  #
-
-```
-
 ## Run interactive SQL tool
 
+To execute the interactive SQL tool from the container, you don't need any user or password:
+
 ```sh
-docker exec -i -t firebird-simgest /usr/local/firebird/bin/isql
+docker exec -i -t firebird-container-name /opt/firebird/bin/isql
 ```
+
+## Set the password
+
+To change or generate the password for the first time, connect to the isql tool with the security database:
+
+```sh
+docker exec -i -t firebird-container-name /opt/firebird/bin/isql /opt/firebird/security3.fdb
+```
+
+And set the SYSDBA password using:
+
+```sql
+CREATE OR ALTER USER SYSDBA PASSWORD 'masterkey';
+COMMIT;
+```
+
+> NOTE: you must exit isql tool to apply the changes, because the security3.fdb database will be locked while the isql tool is running
+
+
+
